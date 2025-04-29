@@ -147,12 +147,14 @@ def monitor_and_trade():
                 if trade_state != 'buy':
                     print("[신호 감지] close → buy 클릭")
                     safe_click(close_pos[0], close_pos[1])
+                    time.sleep(0.1)
                     safe_click(buy_pos[0], buy_pos[1])
                     trade_state = 'buy'
             elif found_sell:
                 if trade_state != 'sell':
                     print("[신호 감지] sell → sell 클릭")
                     safe_click(close_pos[0], close_pos[1])
+                    time.sleep(0.1)
                     safe_click(sell_pos[0], sell_pos[1])
                     trade_state = 'sell'
             elif found_close:
