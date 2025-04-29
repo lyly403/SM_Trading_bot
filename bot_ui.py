@@ -116,7 +116,7 @@ def on_end_time_change(event=None):
     h = end_hour_combo.get()
     m = end_minute_combo.get()
     positions['end_time'] = f"{h}:{m}"
-    print(f"종료 시간 저장됨: {positions['start_time']}")
+    print(f"종료 시간 저장됨: {positions['end_time']}")
     save_positions_to_file()
 
 
@@ -185,6 +185,18 @@ def on_recognition_area_selected(rect):
 def open_drag_capture():
     DragCaptureWindow(app, on_recognition_area_selected)
 
+def apply_time_settings():
+    h_start = start_hour_combo.get()
+    m_start = start_minute_combo.get()
+    h_end = end_hour_combo.get()
+    m_end = end_minute_combo.get()
+
+    positions['start_time'] = f"{h_start}:{m_start}"
+    positions['end_time'] = f"{h_end}:{m_end}"
+    save_positions_to_file()
+
+    print(f"[적용 완료] 시작 시간: {positions['start_time']}, 종료 시간: {positions['end_time']}")
+
 # UI 및 기존 코드에 신호 인식 버튼 추가
 
 app = ctk.CTk()
@@ -244,14 +256,12 @@ minutes = [f"{m:02d}" for m in range(60)]
 start_hour_combo = ctk.CTkComboBox(time_start_frame, values=hours, width=60)
 start_hour_combo.set("09")
 start_hour_combo.pack(side="left", padx=(0,5))
-start_hour_combo.bind("<<ComboboxSelected>>", on_start_time_change)
 
 ctk.CTkLabel(time_start_frame, text=":").pack(side="left")
 
 start_minute_combo = ctk.CTkComboBox(time_start_frame, values=minutes, width=60)
 start_minute_combo.set("00")
 start_minute_combo.pack(side="left", padx=(5,0))
-start_minute_combo.bind("<<ComboboxSelected>>", on_start_time_change)
 
 time_end_frame = ctk.CTkFrame(setting_frame)
 time_end_frame.pack(pady=5)
@@ -261,15 +271,15 @@ ctk.CTkLabel(time_end_frame, text="종료 시간", width=100).pack(side="left", 
 end_hour_combo = ctk.CTkComboBox(time_end_frame, values=hours, width=60)
 end_hour_combo.set("15")
 end_hour_combo.pack(side="left", padx=(0,5))
-end_hour_combo.bind("<<ComboboxSelected>>", on_end_time_change)
 
 ctk.CTkLabel(time_end_frame, text=":").pack(side="left")
 
 end_minute_combo = ctk.CTkComboBox(time_end_frame, values=minutes, width=60)
 end_minute_combo.set("00")
 end_minute_combo.pack(side="left", padx=(5,0))
-end_minute_combo.bind("<<ComboboxSelected>>", on_end_time_change)
 
+apply_time_button = ctk.CTkButton(setting_frame, text="시간 적용", width=320, height=40, command=apply_time_settings)
+apply_time_button.pack(pady=10)
 
 load_positions_from_file()
 update_time_ui()
