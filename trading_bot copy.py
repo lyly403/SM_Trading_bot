@@ -47,11 +47,11 @@ def is_time_in_range(current_str, start_str, end_str):
     current = time_str_to_minutes(current_str)
     start = time_str_to_minutes(start_str)
     end = time_str_to_minutes(end_str)
-    if start <= end:
-        return start <= current <= end
+    if start < end:
+        return start < current < end
     else:
         # 종료시간이 다음날인 경우
-        return current >= start or current <= end
+        return current > start or current < end
 
 def get_current_time_str():
     now = datetime.datetime.now()
@@ -100,8 +100,9 @@ def monitor_and_trade():
             now_str = get_current_time_str()
             if not is_time_in_range(now_str, positions['start_time'], positions['end_time']):
                 print(f"[시간대 벗어남] 현재시간 {now_str}는 허용 시간 {positions['start_time']}~{positions['end_time']} 밖입니다.")
-                trade_stop_event.wait(5)
-                continue
+                safe_click(close_pos[0], close_pos[1])
+                break
+    
 
             screenshot = pyautogui.screenshot(region=(rx, ry, rw, rh))
 
