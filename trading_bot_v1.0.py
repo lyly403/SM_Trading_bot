@@ -64,15 +64,7 @@ def color_match(c1, c2, tolerance=30):
     return all(abs(a-b) <= tolerance for a,b in zip(c1, c2))
 
 def safe_click(x, y):
-    """
-    클릭 시 사용자의 마우스 위치를 훼손하지 않고, 
-    클릭 대상 위치로 순간 이동 후 클릭, 다시 원래 위치로 복원합니다.
-    """
-    current_pos = pyautogui.position()  # 현재 위치 저장
-    try:
-        pyautogui.click(x, y)
-    finally:
-        pyautogui.moveTo(current_pos.x, current_pos.y)
+    pyautogui.click(x, y)
 
 def monitor_and_trade():
     global trade_stop_event, trade_state
@@ -92,6 +84,8 @@ def monitor_and_trade():
         return
 
     print("[매매 시작] 감시 중... 중지하려면 '매매 종료' 버튼 누르세요.")
+    safe_click(close_pos[0], close_pos[1])  # 초기화
+    time.sleep(0.1)
 
     rx, ry, rw, rh = recognition_area
 
@@ -116,9 +110,9 @@ def monitor_and_trade():
                     px = screenshot.getpixel((x, y))
                     if color_match(px, signal_colors.get('buy')):
                         found_buy = True
-                    elif color_match(px, signal_colors.get('sell')):
+                    if color_match(px, signal_colors.get('sell')):
                         found_sell = True
-                    elif color_match(px, signal_colors.get('close')):
+                    if color_match(px, signal_colors.get('close')):
                         found_close = True
                     if found_buy and found_close:
                         break
