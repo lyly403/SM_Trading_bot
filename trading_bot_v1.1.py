@@ -435,7 +435,7 @@ def show_positions_on_screen():
 
 # UI 및 설정
 app = ctk.CTk()
-app.geometry("420x460")
+app.geometry("700x530")
 app.title("민규와 상우의 100조부자 열쇠")
 
 def toggle_settings():
@@ -444,18 +444,24 @@ def toggle_settings():
     else:
         setting_frame.pack(pady=10)
 
-trade_frame = ctk.CTkFrame(app)
+main_frame = ctk.CTkFrame(app)
+main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+left_frame = ctk.CTkFrame(main_frame)
+left_frame.pack(side="left", fill="y")
+
+trade_frame = ctk.CTkFrame(left_frame)
 trade_frame.pack(pady=20)
 
 start_button = ctk.CTkButton(trade_frame, text="매매 시작", width=120, height=40, command=start_trading_thread)
-start_button.pack(side="left", padx=10)
+start_button.pack(side="left", padx=20)
 stop_button = ctk.CTkButton(trade_frame, text="매매 종료", width=120, height=40, command=stop_trading)
-stop_button.pack(side="left", padx=10)
+stop_button.pack(side="left", padx=20)
 
-setting_button = ctk.CTkButton(app, text="Setting", command=toggle_settings, width=120, height=40)
+setting_button = ctk.CTkButton(left_frame, text="Setting", command=toggle_settings, width=120, height=40)
 setting_button.pack(pady=10)
 
-setting_frame = ctk.CTkFrame(app)
+setting_frame = ctk.CTkFrame(left_frame)
 setting_frame.pack_forget()
 
 coordinate_frame = ctk.CTkFrame(setting_frame)
@@ -464,7 +470,7 @@ coordinate_frame.pack(pady=5)
 btn_info = [("매수 버튼", "buy"), ("매도 버튼", "sell"), ("청산 버튼", "close")]
 
 for text, key in btn_info:
-    btn = ctk.CTkButton(coordinate_frame, text=text, width=100, height=40,
+    btn = ctk.CTkButton(coordinate_frame, text=text, width=90, height=40,
                         command=lambda k=key: save_position(k))
     btn.pack(side="left", padx=5)
 
@@ -475,12 +481,12 @@ signal_btn_info = [("매수 신호", "buy"), ("매도 신호", "sell"), ("청산
 
 
 for text, key in signal_btn_info:
-    btn = ctk.CTkButton(signal_frame, text=text, width=100, height=40,
+    btn = ctk.CTkButton(signal_frame, text=text, width=90, height=40,
                         command=lambda k=key: save_signal_color(k))
     btn.pack(side="left", padx=5)
 
-ctk.CTkButton(setting_frame, text="인식 범위 설정", width=320, height=40, command=open_drag_capture).pack(pady=5)
-ctk.CTkButton(setting_frame, text="좌표 확인", width=320, height=40, command=show_positions_on_screen).pack(pady=5)
+ctk.CTkButton(setting_frame, text="인식 범위 설정", width=290, height=40, command=open_drag_capture).pack(pady=5)
+ctk.CTkButton(setting_frame, text="좌표 확인", width=290, height=40, command=show_positions_on_screen).pack(pady=5)
 
 time_start_frame = ctk.CTkFrame(setting_frame)
 time_start_frame.pack(pady=(10, 5))
@@ -515,9 +521,21 @@ end_minute_combo = ctk.CTkComboBox(time_end_frame, values=minutes, width=60, sta
 end_minute_combo.set("00")
 end_minute_combo.pack(side="left", padx=(5, 0))
 
-apply_time_button = ctk.CTkButton(setting_frame, text="시간 적용", width=320, height=40, command=apply_time_settings)
+apply_time_button = ctk.CTkButton(setting_frame, text="시간 적용", width=290, height=40, command=apply_time_settings)
 apply_time_button.pack(pady=10)
 
+log_frame = ctk.CTkFrame(main_frame)
+log_frame.pack(side="left", fill="both", expand=True, padx=(20, 0))
+
+log_label = ctk.CTkLabel(log_frame, text="로그창", anchor="w")
+log_label.pack(fill="x")
+
+log_text = ctk.CTkTextbox(log_frame, width=300, height=400)
+log_text.pack(fill="both", expand=True)
+
+def log(message):
+    log_text.insert("end", message + "\n")
+    log_text.see("end")  # 자동 스크롤
 
 # 저장된 값으로 UI 업데이트
 load_positions_from_file()
